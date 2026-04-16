@@ -8,12 +8,17 @@ import MainNavigator from './MainNavigator';
 import { navigationRef } from './navigationRef';
 
 export default function RootNavigator() {
-  const {isAuthenticated, isLoading, initialize} = useAuthStore();
+  const {isAuthenticated, isLoading, initialize, logout} = useAuthStore();
   const {colors, isDark} = useTheme();
 
   useEffect(() => {
     initialize();
-  }, [initialize]);
+    
+    // 401 에러 시 로그아웃 처리 등록
+    import('../api/client').then(({setUnauthorizedCallback}) => {
+      setUnauthorizedCallback(logout);
+    });
+  }, [initialize, logout]);
 
   if (isLoading) {
     return (
